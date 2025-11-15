@@ -1,0 +1,59 @@
+"use server";
+
+import bcrypt from "bcrypt";
+import { getCollection } from "@/lib/db";
+import { RegisterFormSchema } from "@/lib/rules";
+import { redirect } from "next/navigation";
+import { createSession } from "@/lib/sessions";
+
+export async function register(state, formData) {
+  // this code delay the form registry
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  const validatedFields = RegisterFormSchema.safeParse({
+    username: formData.get("username"),
+    email: formData.get("email"),
+    password: formData.get("password"),
+    confirmPassword: formData.get("confirmpassword"),
+  });
+
+  // this is the updated code for zod pakage {"validationZodError"}
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.ZodError,
+      email: formData.get("email"),
+    };
+  }
+
+  // extract the validated fields
+  const { username, email, password } = validatedFields.data;
+
+  // check if the user already exists
+  const userCollection = await getCollection("users");
+  if (!userCollection) {
+    return { errors: { email: "server error" } };
+  }
+
+  // check if the user already exists
+  const existingUser = await userCollection.findOne({ email });
+  if (existingUser) {
+    return { errors: { email: "User already exists" } };
+  }
+
+  // hash the password before storing it (omitted for brevity)
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  // store the user in the database
+  const results = await userCollection.insertOne({
+    username,
+    email,
+    password: hashedPassword,
+  });
+
+  // create a session
+  await createSession(results.insertedId);
+
+  // redirect the user to an order page after successfully registering
+  redirect("/dashboard");
+}
+// we use zod for validation (install zod package first)
