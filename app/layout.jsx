@@ -1,18 +1,25 @@
 import Link from "next/link";
 import "./globals.css";
 
-
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body suppressHydrationWarning>
         <header>
           <nav>
-            <Link className="nav-link" href="/">Home</Link>
+            <Link className="nav-link" href="/">
+              Home
+            </Link>
             <div>
-              <Link className="nav-link" href="/dashboard">Dashboard</Link>
-              <Link className="nav-link" href="/register">Register</Link>
-              <Link className="nav-link" href="/login">Login</Link>
+              <Link className="nav-link" href="/dashboard">
+                Dashboard
+              </Link>
+              <Link className="nav-link" href="/register">
+                Register
+              </Link>
+              <Link className="nav-link" href="/login">
+                Login
+              </Link>
             </div>
           </nav>
         </header>

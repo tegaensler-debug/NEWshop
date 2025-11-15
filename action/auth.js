@@ -51,7 +51,7 @@ export async function register(state, formData) {
   });
 
   // create a session
-  await createSession(results.insertedId);
+  await createSession(results.insertedId.toString());
 
   // redirect the user to an order page after successfully registering
   redirect("/dashboard");
