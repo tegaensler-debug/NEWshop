@@ -1,32 +1,26 @@
-import Link from "next/link";
 import "./globals.css";
+import { Poppins } from "next/font/google";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  variable: "--font-poppins",
+  weight: ["200", "400", "700"],
+});
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body suppressHydrationWarning>
+      <body
+        suppressHydrationWarning
+        className={`${poppins.variable} font-sans`}
+      >
         <header>
-          <nav>
-            <Link className="nav-link" href="/">
-              Home
-            </Link>
-            <div>
-              <Link className="nav-link" href="/dashboard">
-                Dashboard
-              </Link>
-              <Link className="nav-link" href="/register">
-                Register
-              </Link>
-              <Link className="nav-link" href="/login">
-                Login
-              </Link>
-            </div>
-          </nav>
+          <Navigation />
         </header>
         <main>{children}</main>
-        <footer>
-          <p>© 2025 tegaensler@gmail.com</p>
-        </footer>
+        <Footer />
       </body>
     </html>
   );

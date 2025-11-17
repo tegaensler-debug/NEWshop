@@ -2,9 +2,10 @@
 
 import bcrypt from "bcrypt";
 import { getCollection } from "@/lib/db";
-import { RegisterFormSchema } from "@/lib/rules";
+import { LoginFormSchema, RegisterFormSchema } from "@/lib/rules";
 import { redirect } from "next/navigation";
 import { createSession } from "@/lib/sessions";
+import { errors } from "jose";
 
 export async function register(state, formData) {
   // this code delay the form registry
@@ -57,3 +58,41 @@ export async function register(state, formData) {
   redirect("/dashboard");
 }
 // we use zod for validation (install zod package first)
+
+export async function login(state, formData) {
+  // validate form fields
+  const validatedFields = LoginFormSchema.safeParse({
+    email: formData.get("email"),
+    password: formData.get("password"),
+  });
+
+  // if any form fileds are invalid
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.ZodError,
+      email: formData.get("email"),
+    };
+  }
+
+  // extract form fields
+  const { email, password } = validatedFields.data;
+
+  // check if email exists in our DB
+  const userCollection = await getCollection("users");
+  if (!userCollection) return { errors: { email: "Server erro!" } };
+
+  const existingUser = await userCollection.findOne({ email });
+  if (!existingUser) return { errors: { email: "Invalid credentials." } };
+
+  // check password
+  const matchedPassword = await bcrypt.compare(password, existingUser.password)
+  if (!matchedPassword) return {errors: {email: "Invalid credentials"}}
+
+  // save in DB
+  await createSession(existingUser._id.toString())
+   
+  console.log(existingUser)
+
+  // redirect
+  redirect('/dashboard')
+}

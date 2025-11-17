@@ -50,8 +50,8 @@ export default function RegisterPage() {
           <button disabled={isPending} className="btn-primary">
             {isPending ? "Loading..." : "Register"}
           </button>
-          <Link href="/auth/login" className="text-link">
-            Or Log in
+          <Link href="/login" className="text-link">
+            Log in
           </Link>
         </div>
       </form>
