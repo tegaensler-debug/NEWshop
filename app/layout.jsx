@@ -1,21 +1,12 @@
 import "./globals.css";
-import { Poppins } from "next/font/google";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  variable: "--font-poppins",
-  weight: ["200", "400", "700"],
-});
+import { myFont } from "@/lib/fonts";
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        suppressHydrationWarning
-        className={`${poppins.variable} font-sans`}
-      >
+      <body suppressHydrationWarning className={myFont.className}>
         <header>
           <Navigation />
         </header>
