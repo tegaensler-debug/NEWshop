@@ -23,13 +23,13 @@ export default function RegisterPage() {
             <p className="error">{state.errors.email}</p>
           )}
         </div>
-   
+
         <div>
           <label htmlFor="password">Password:</label>
           <input placeholder="******" type="password" name="password" />
           {state?.errors?.email && (
             <p className="error">{state.errors.email}</p>
-          )}   
+          )}
         </div>
 
         <div className="flex items-end gap-4">
