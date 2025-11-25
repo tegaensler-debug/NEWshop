@@ -5,7 +5,8 @@ import { getCollection } from "@/lib/db";
 import { LoginFormSchema, RegisterFormSchema } from "@/lib/rules";
 import { redirect } from "next/navigation";
 import { createSession } from "@/lib/sessions";
-import { errors } from "jose";
+import { cookies } from "next/headers";
+// import { errors } from "jose";
 
 export async function register(state, formData) {
   // this code delay the form registry
@@ -21,7 +22,8 @@ export async function register(state, formData) {
   // this is the updated code for zod pakage {"validationZodError"}
   if (!validatedFields.success) {
     return {
-      errors: validatedFields.ZodError,
+      errors: validatedFields.error.flatten().fieldErrors,
+      username: formData.get("username"),
       email: formData.get("email"),
     };
   }
@@ -69,7 +71,7 @@ export async function login(state, formData) {
   // if any form fileds are invalid
   if (!validatedFields.success) {
     return {
-      errors: validatedFields.ZodError,
+      errors: validatedFields.error.flatten().fieldErrors,
       email: formData.get("email"),
     };
   }
@@ -85,14 +87,21 @@ export async function login(state, formData) {
   if (!existingUser) return { errors: { email: "Invalid credentials." } };
 
   // check password
-  const matchedPassword = await bcrypt.compare(password, existingUser.password)
-  if (!matchedPassword) return {errors: {email: "Invalid credentials"}}
+  const matchedPassword = await bcrypt.compare(password, existingUser.password);
+  if (!matchedPassword) return { errors: { email: "Invalid credentials" } };
 
-  // save in DB
-  await createSession(existingUser._id.toString())
-   
-  console.log(existingUser)
+  // create session
+  await createSession(existingUser._id.toString());
+
+  console.log(existingUser);
 
   // redirect
-  redirect('/dashboard')
+  redirect("/dashboard");
+}
+
+// logot function
+export async function logout() {
+  const cookiestore = await cookies();
+  cookiestore.delete("session");
+  redirect("/");
 }
