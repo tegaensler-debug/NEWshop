@@ -98,16 +98,16 @@ export default async function deletePost(formData) {
   if (!user) return redirect("/");
 
   // Find the post
-  const postsCollection= await getCollection('post')
+  const postsCollection= await getCollection('posts')
   const post = await postsCollection.findOne({
     _id: ObjectId.createFromHexString(formData.get('postId')) 
   })
 
   // check if the auth user is the owns the post
-  if (user.userId !== post.userId.toString()) return redirect('/')
+  if (user.userId !== post.userId.toString()) return redirect("/");
 
   // Delete post
   postsCollection.findOneAndDelete({_id: post._id})
 
-  revalidatePath("/dashboard")
+  revalidatePath("/dashboard")  
 }
