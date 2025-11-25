@@ -1,14 +1,28 @@
+import getAuthUser from "@/lib/getAuthUser";
 import NavLink from "./NavLink";
+import { logout } from "@/action/auth";
 
-export default function Navigation() {
+export default async function Navigation() {
+  const authUser = await getAuthUser();
+
   return (
     <nav>
       <NavLink label="Home" href="/" />
-      <div>
-        <NavLink label="Dashboard" href="/dashboard" />
-        <NavLink label="Register" href="/register" />
-        <NavLink label="Login" href="/login" />
-      </div>
+
+      {authUser ? (
+        <div className="flex items-center">
+          <NavLink label="New post" href="/posts/create" />
+          <NavLink label="Dashboard" href="/dashboard" />
+          <form action={logout}>
+            <button className="nav-link">Logout</button>
+          </form>
+        </div>
+      ) : (
+        <div>
+          <NavLink label="Register" href="/register" />
+          <NavLink label="Login" href="/login" />
+        </div>
+      )}
     </nav>
   );
 }
